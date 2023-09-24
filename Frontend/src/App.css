@@ -1,0 +1,818 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.App {
+  text-align: center;
+}
+body {
+  padding: 0%;
+  margin: 0%;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+nav {
+  margin: 0;
+  width: 100%;
+  height: 80px;
+  background-color: rgb(255, 255, 255);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgb(7, 6, 6);
+  text-decoration: none;
+}
+
+a {
+  color: rgb(244, 14, 14);
+  text-decoration: none;
+  margin: 10px;
+  font-size: 20px;
+}
+
+header {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  color: #212529;
+}
+
+.particles-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Place the particle animation behind other content */
+  background-color: transparent; /* No background color for the container */
+}
+
+#tsparticles canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.nav-area {
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  /* z-index: 999;
+  position: fixed; */
+}
+
+.logo img{
+  width: 50%;
+  height: 10%;
+  text-decoration: none;
+  font-size: 30px;
+  color: #212529;
+}
+
+.menus {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  height: 5em;
+}
+
+.menu-items {
+  position: relative;
+  font-size: 20px;
+  margin: 0 12px; /* Adjust spacing between menu items */
+}
+
+.menu-items a {
+  display: block;
+  font-size: inherit;
+  color: #212529;
+  text-decoration: none;
+  padding: 0.3rem;
+}
+
+.menu-items button {
+  display: flex;
+  align-items: center;
+  color: #212529;
+  font-size: inherit;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  width: 100%;
+}
+.auth-links {
+  display: flex;
+  align-items: center;
+  gap: 3px; /* Adjust the spacing between "Create Post" and "Logout" as needed */
+}
+.LogOut-Button{
+  background-color: #ffffff; /* Change to your desired background color */
+  color: #000000; /* Change to your desired text color */
+  padding: 10px 20px; /* Adjust padding as needed */
+  border: none;
+  border-radius: 5px; /* Add rounded corners if desired */
+  cursor: pointer;
+  width: 5em;
+  font-size: 20px;
+}
+
+button span {
+  margin-left: 3px;
+}
+
+.menu-items > a,
+.menu-items button {
+  text-align: left;
+  font-size: 20px;
+}
+
+.menu-items a:hover,
+.menu-items button:hover {
+  background-color: #ffffff;
+  font-size: 25px;
+  color:#cc3852;
+}
+
+.arrow::after {
+  content: "";
+  display: inline-block;
+  margin-left: 0.28em;
+  vertical-align: 0.09em;
+  border-top: 0.42em solid;
+  border-right: 0.32em solid transparent;
+  border-left: 0.32em solid transparent;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  left: auto;
+  box-shadow: 0 10px 15px -3px rgba(46, 41, 51, 0.08),
+    0 4px 6px -2px rgba(71, 63, 79, 0.16);
+  font-size: 0.875rem;
+  z-index: 9999;
+  min-width: 10rem;
+  padding: 0.5rem 0;
+  list-style: none;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  display: none;
+}
+
+.dropdown.show {
+  display: block;
+}
+
+.dropdown .dropdown-submenu {
+  position: absolute;
+  left: 100%;
+  top: -7px;
+}
+
+
+.helpline-container {
+  background-color: rgb(255, 255, 255);
+  padding: 20px;
+  color: rgb(255, 14, 14);
+  display: flex;
+  flex-direction: row;
+  /* border-radius: 0 0 8px 8px; */
+  /* position: fixed; or position: sticky; */
+  /* top: 0; */
+  width: 100%;
+  /* z-index: 999; Make it appear above other content */
+}
+
+.helpline-container h2 {
+  margin-bottom: 10px;
+}
+
+/* content */
+
+.content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 3rem 20px;
+}
+
+.content h2 {
+  margin-bottom: 1rem;
+}
+
+.content a {
+  color: #cc3852;
+  margin-right: 10px;
+}
+
+/* Remove the position and bottom properties from .footer */
+.footer {
+  background-color: black;
+  color: white;
+  padding: 40px 0;
+  text-align: center;
+  width: 100%;
+}
+
+/* Remove the height: 100% from .footer-content */
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-links {
+  margin-top: 20px;
+}
+
+.footer-links a {
+  color: white;
+  text-decoration: none;
+  margin: 0 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.footer-copyright {
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.random-joke-header {
+  margin-top: 70px;
+  background-image: url('../src/images/jokeimg.jpeg');
+  /* background: linear-gradient(454deg, pink, orange); */
+  padding: 30px; /* Increased padding for more height */
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px; /* Increased height */
+}
+
+blockquote {
+  font-size: 50px; /* Increased font size */
+  align-items: center;
+  text-align: center;
+}
+
+.joke-text {
+  color: black;
+  font-size: 20px;
+  text-decoration: underline;
+}
+
+.home-page {
+  background-color: #ffffff;
+}
+
+.container-home {
+  padding: 20px;
+}
+
+.content-section-home {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Adjust the width ratio of image and text */
+  align-items: center;
+  gap: 20px; /* Adjust the gap between columns */
+  margin-bottom: 40px;
+}
+
+.image-container-home {
+  position: relative; /* Added positioning for overlay */
+  max-width: 100%; /* Adjusted to fit the container */
+}
+
+.image-home {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 50%; /* Adjusted to fit the container */
+  height: auto; /* Allowing proportional height */
+  object-fit: cover;
+  border-radius: 10px; /* Added border radius for a rounded image */
+}
+
+.text-container-home {
+  position: absolute; /* Positioning for overlay */
+  top: 50%; /* Adjust vertical positioning */
+  right: 20px; /* Adjust horizontal positioning */
+  transform: translateY(-50%); /* Centering vertically */
+  width: 50%; /* Adjust the width of the text box */
+}
+
+.text-box-home {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px; /* Increased padding for better spacing */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Roboto", sans-serif;
+}
+
+.text-box-home h2 {
+  font-size: 36px; /* Adjusted font size */
+  margin-bottom: 10px;
+  color: #333;
+  font-weight: bold;
+}
+
+.text-box-home p {
+  font-size: 24px; /* Adjusted font size */
+  color: #666;
+  margin-bottom: 15px; /* Added margin for spacing */
+}
+
+.text-box-home a {
+  font-size: 18px;
+  color: #007bff;
+  text-decoration: none;
+}
+
+/* Media query for responsiveness */
+@media (max-width: 768px) {
+  .content-section-home {
+    grid-template-columns: 1fr; /* Change to a single column layout on smaller screens */
+  }
+
+  .text-container-home {
+    position: static; /* Reset positioning for smaller screens */
+    width: 100%; /* Full width on smaller screens */
+  }
+}
+
+.home-logoslider-mainContainer {
+  margin: 10px;
+}
+
+.mainhome-logoslider-mainContainer .home-logoslider-container {
+  padding: 40px 0;
+}
+
+.home-logoslider-mainContainer .home-logoslider-container img {
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  text-align: center;
+  height: 150px;
+  width: 150px;
+  margin: 0 auto;
+}
+
+div h3 {
+  color: white;
+  font-weight: bold;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Meme Page */
+
+.MemePage .snake-border {
+  position: relative;
+  border: 20px solid transparent; /* Increase border width */
+  border-image: linear-gradient(45deg, #0c0047, #d39ee9, #aaff93) 10; /* Dark blue, purple, pink gradient */
+  border-image-slice: 1;
+  animation: snakeTrail 2s linear infinite;
+}
+
+@keyframes snakeTrail {
+  0% {
+    border-image-source: linear-gradient(45deg, #0c0047, #d39ee9, #aaff93);
+    border-image-slice: 1;
+  }
+  100% {
+    border-image-source: linear-gradient(45deg, #0c0047, #d39ee9, #aaff93);
+    border-image-slice: 1;
+  }
+}
+
+.MemePage {
+  text-align: center;
+  width: 100%;
+  background-image: url("./images/memeimg3.jpeg"); /* Replace with your image URL */
+  background-size: 100%;
+}
+
+.MemePage .App-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* background-color: #03045e; */
+  /* padding: 20px; */
+  border-radius: 10px;
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); */
+  width: 100%; /* Increase the width as needed */
+}
+
+.MemePage .app-title {
+  margin-top: 60px;
+  font-size: 6em;
+  margin-bottom: 45px;
+  color: rgb(0, 0, 0);
+}
+
+.MemePage .meme-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.MemePage .input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 90%;
+}
+
+.MemePage .input,
+.MemePage .text-area {
+  flex: 1; /* Allow the input boxes to grow and take available space */
+  padding: 15px; /* Increase padding for better spacing */
+  border-radius: 5px;
+  border: 5px solid #61dfff;
+  margin-right: 10px;
+  height: 4.5em; /* Increase the height as desired */
+  width: 20em;
+  font-size: 15px;
+}
+
+.MemePage .button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 10px;
+  height: 3.5em;
+  width: 15em;
+  text-align: center; /* Add this line to center the text */
+  display: flex; /* Add this line to ensure flex alignment */
+  justify-content: center; /* Add this line to center horizontally */
+  align-items: center;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 10px;
+  margin-top: 30px;
+  margin-bottom: 50px;
+  transition: background-color 0.2s ease;
+}
+
+.MemePage .button:hover {
+  background-color: #0056b3;
+}
+
+.MemePage .generate-button {
+  background-color: #00cc88;
+  font-size: 1.2em;
+}
+
+.MemePage .generated-meme-card {
+  margin-top: 20px;
+}
+
+.MemePage .meme-card {
+  display: inline-block;
+  position: relative;
+  color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  text-align: center;
+  margin-bottom: 100px;
+}
+
+.MemePage .generated-meme-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+
+/* Reset some default browser styles */
+
+
+.OcdQuiz, .ADHDQuiz, .AnxietyQuiz , .DepressionQuiz , .Quiz {
+  font-family: Arial, sans-serif;
+
+  background-image: url("../src/images/mona-eendra-vC8wj_Kphak-unsplash.jpg");
+  background-size: cover; 
+  background-position:  center;
+
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  
+}
+
+
+
+
+
+.Quiz .heading-txt {
+  text-align: center;
+  color : rgb(195, 0, 255);
+  margin-bottom: 40px;
+  
+
+}
+
+
+
+.OcdQuiz .container , .ADHDQuiz .container , .AnxietyQuiz .container , .DepressionQuiz .container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.OcdQuiz .heading-txt, .AnxietyQuiz .heading-txt , .DepressionQuiz .heading-txt, .ADHDQuiz .heading-txt {
+  text-align: center;
+  color : blue;
+  margin-bottom: 20px;
+}
+
+.OcdQuiz  .question, .AnxietyQuiz .question , .DepressionQuiz .question, .ADHDQuiz .question  {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+
+
+.OcdQuiz .option-container ,.AnxietyQuiz .option-container , .DepressionQuiz .option-container, .ADHDQuiz .option-container {
+  list-style: none;
+  padding-left: 10;
+  color :#630a4a;
+}
+
+.OcdQuiz .option .AnxietyQuiz .option , .DepressionQuiz .option, .ADHDQuiz .option {
+  margin-bottom: 10px;
+}
+
+input[type="radio"] {
+  margin-right: 5px;
+}
+
+ .button {
+  display: block;
+  margin: 20px auto;
+  padding: 20px 50px;
+  background-color: #007bff;
+  color: rgb(255, 255, 255);
+  border: none;
+  cursor: pointer;
+  text-align: center;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.hidden {
+  display: none;
+}
+
+#score {
+  margin-top: 100 px;
+  text-align: center;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content:center
+}
+
+.card {
+  border: 1px solid #160202;
+  border-radius: 26px;
+  margin: 20px;
+  overflow: hidden;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 calc(33.33% - 40px);
+  max-width: 300px;
+}
+
+.card-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 20px;
+}
+
+h2 {
+  margin: 0;
+}
+
+p {
+  margin: 10px 0;
+}
+
+b {
+  display: inline-block;
+  background-color: red;
+  color: pink;
+  padding: 10px 20px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+b:hover {
+  background-color: #0056b3;
+}
+
+
+
+  
+  .createPostPage {
+    width: 100%;
+    height: calc(100vh - 80px);
+    display: grid;
+    place-items: center;
+  }
+  
+  .createPostPage .cpContainer {
+    width: 500px;
+    height: auto;
+    padding: 20px;
+    background-color: black;
+    border-radius: 12px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .createPostPage .cpContainer h1 {
+    text-align: center;
+  }
+  
+  .createPostPage .cpContainer label {
+    font-size: 25px;
+  }
+  .createPostPage .cpContainer .inputGp {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .createPostPage .inputGp input,
+  .inputGp textarea {
+    font-size: 18px;
+    border: none;
+    border-radius: 2px;
+    padding: 5px;
+  }
+  
+  .createPostPage .inputGp input {
+    height: 40px;
+  }
+  .createPostPage .inputGp textarea {
+    height: 150px;
+  }
+  
+  .createPostPage .cpContainer button {
+    margin-top: 20px;
+    height: 40px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+
+  .createPostPage input,
+  textarea {
+    margin-top: 5px;
+  }
+  
+  .loginPage {
+    width: 100%;
+    height: 28em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .loginPage p {
+    font-size: 30px;
+  }
+  
+  /* GOOGLE BUTTOn */
+  .loginPage .login-with-google-btn {
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    padding: 5px 16px 12px 42px;
+    border: none;
+    border-radius: 3px;
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.25);
+    color: #757575;
+    font-size: 25px;
+    font-weight: 500;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJNMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uOCA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCAwIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBNDMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=);
+    background-color: white;
+    background-repeat: no-repeat;
+    background-position: 12px 11px;
+  }
+  .loginPage .login-with-google-btn:hover {
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25);
+  }
+  .loginPage .login-with-google-btn:active {
+    background-color: #eeeeee;
+  }
+  .loginPage .login-with-google-btn:focus {
+    outline: none;
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.25),
+      0 0 0 3px #c8dafc;
+  }
+  .loginPage .login-with-google-btn:disabled {
+    filter: grayscale(100%);
+    background-color: #ebebeb;
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.25);
+    cursor: not-allowed;
+  }
+
+  .loginPage button:hover {
+    background-color: #0056b3; /* Change to your desired hover color */
+  }
+  
+  .blogsPage {
+    width: 100%;
+    min-height: calc(100vh - 80px);
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+  }
+  
+  .blogsPage .post {
+    width: 600px;
+    height: auto;
+    max-height: 600px;
+    background-color: rgb(250, 250, 250);
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 15px;
+  }
+  
+  .blogsPage .post .postHeader {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .blogsPage .postHeader .title {
+    flex: 50%;
+  }
+  .blogsPage .postHeader .deletePost {
+    flex: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .blogsPage .deletePost button {
+    border: none;
+  
+    background: none;
+    font-size: 30px;
+    cursor: pointer;
+  }
+  
+  .blogsPage .post .postTextContainer {
+    word-wrap: break-word;
+    height: auto;
+    max-height: 400px;
+    width: 100%;
+    overflow: hidden;
+    overflow-y: auto;
+  }
+  
+  .blogsPage .postAuthor{
+    color: #000000;
+  }
+
+  
+  
+  
+
+
