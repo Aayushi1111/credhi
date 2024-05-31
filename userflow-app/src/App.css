@@ -94,7 +94,7 @@ body {
   display: inline-block;
   padding: 10px 20px;
   color: white;
-  background-color: #007bff;
+  background-color: #1e0652;
   border: none;
   cursor: pointer;
   text-align: center;
@@ -105,7 +105,7 @@ body {
 }
 
 .btn-primary {
-  background-color: #007bff;
+  background-color:#1e0652;
 }
 
 .btn-secondary {
@@ -124,7 +124,7 @@ body {
 }
 
 .documents-list ul li {
-  background-color: #f4f4f4;
+  background-color: #27079c;
   margin: 5px 0;
   padding: 10px;
   border: 1px solid #ddd;
@@ -137,8 +137,9 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  width: 100%;
   padding: 20px;
-  background-color: #f4f4f4;
+  background-color: #9ec3d7;
 }
 
 .dashboard-content {
@@ -214,20 +215,46 @@ body {
 
 
 
+/* Container for transaction sections */
+
+.transaction-container {
+  display: flex;
+  flex-direction: row;
+  background-color: #164d87;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 20px;
+}
+
+/* Styling for initiate and retrieve containers */
 .transaction-initiate-container,
-.document-retrieve-container {
+.previous-transactions {
+  flex: 1;
   margin: 20px;
   padding: 20px;
-  background-color: #ffffff;
+  background-color: #d5dbfa;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.transaction-initiate-container h1,
-.document-retrieve-container h1 {
-  margin-bottom: 20px;
+/* Additional spacing for the containers */
+.transaction-initiate-container {
+  margin-right: 20px;
 }
 
+.previous-transactions {
+  margin-left: 20px;
+}
+
+/* Heading styling */
+.transaction-initiate-container h1,
+.previous-transactions h1 {
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  color: #1d095f;
+}
+
+/* Form group styling */
 .transaction-form .form-group {
   margin-bottom: 15px;
   text-align: left;
@@ -237,11 +264,12 @@ body {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
+  color:#1d095f;
 }
 
 .transaction-form .form-group input {
   width: 100%;
-  padding: 8px 12px;
+  padding: 10px;
   box-sizing: border-box;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -252,11 +280,25 @@ body {
   padding: 3px;
 }
 
-.previous-transactions {
-  margin-top: 20px;
+.transaction-form button {
+  padding: 10px 20px;
+  background-color: #0b2f56;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  width: 200px;
+  align-items: center;
+ 
 }
 
-.transaction-item {
+.transaction-form button:hover {
+  background-color: #0056b3;
+}
+
+/* Previous transactions styling */
+.previous-transactions .transaction-item {
   background-color: #f4f4f4;
   margin-bottom: 15px;
   padding: 10px;
@@ -264,24 +306,96 @@ body {
   border-radius: 4px;
 }
 
-.transaction-item h3 {
+.previous-transactions .transaction-item h3 {
   margin-top: 0;
+  color: #333;
 }
 
-.transaction-item ul {
+.previous-transactions .transaction-item ul {
   list-style: none;
   padding: 0;
 }
 
-.transaction-item ul li {
+.previous-transactions .transaction-item ul li {
   margin-bottom: 5px;
 }
 
-.transaction-item ul li a {
+.previous-transactions .transaction-item ul li a {
   color: #007bff;
   text-decoration: none;
 }
 
-.transaction-item ul li a:hover {
+.previous-transactions .transaction-item ul li a:hover {
+  text-decoration: underline;
+}
+
+/* Container for document retrieve sections */
+.document-retrieve-container {
+  display: flex;
+  flex-direction: column; /* Change to column to stack items vertically */
+  justify-content: flex-start;
+  align-items: center; /* Center align items horizontally */
+  margin: 0;
+  padding: 0;
+  background-color: #d5dbfa;
+  border-radius: 0;
+  min-height: 100vh; /* Ensure full height */
+  width: 100%;
+
+}
+
+/* Styling for retrieve containers */
+.document-retrieve-container h1 {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.75em;
+  color:  #1d095f; /* Ensure the heading color stands out on the background */
+}
+
+/* Styling for the previous transactions section */
+.previous-transactions-retrieve {
+  width: 100%;
+  margin-top: 20px; /* Add some space between the heading and this section */
+  padding: 0;
+  border-radius: 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.previous-transactions-retrieve h1 {
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  color: #1d095f;
+}
+
+/* Styling for the transaction item */
+.previous-transactions-retrieve .transaction-item {
+  background-color: #f4f4f4;
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.previous-transactions-retrieve .transaction-item h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.previous-transactions-retrieve .transaction-item ul {
+  list-style: none;
+  padding: 0;
+}
+
+.previous-transactions-retrieve .transaction-item ul li {
+  margin-bottom: 5px;
+}
+
+.previous-transactions-retrieve .transaction-item ul li a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.previous-transactions-retrieve .transaction-item ul li a:hover {
   text-decoration: underline;
 }

@@ -40,6 +40,9 @@ const Login = ({ setIsAuthenticated }) => {
           Login
         </button>
       </form>
+      <p>
+        New user? <a href="/Register">Register here</a>
+      </p>
     </div>
   );
 };
