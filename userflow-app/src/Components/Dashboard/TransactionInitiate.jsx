@@ -9,9 +9,21 @@ const TransactionInitiate = () => {
     { name: 'Transaction 1', date: '2023-12-01', files: ['file1.pdf', 'file2.pdf'] },
     { name: 'Transaction 2', date: '2024-01-15', files: ['file3.pdf', 'file4.pdf'] },
   ]);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleFileChange = (e) => {
-    setDocuments([...e.target.files]);
+    const files = Array.from(e.target.files);
+    const maxFileSize = 5 * 1024 * 1024; // 5MB size limit
+
+    for (let file of files) {
+      if (file.size > maxFileSize) {
+        setErrorMessage(`File ${file.name} exceeds the 5MB size limit.`);
+        return;
+      }
+    }
+
+    setDocuments(files);
+    setErrorMessage('');
   };
 
   const handleSubmit = (e) => {
@@ -51,10 +63,17 @@ const TransactionInitiate = () => {
           <label>Upload Documents:</label>
           <input
             type="file"
+            id="documents"
+            name="documents"
             multiple
+            accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
             onChange={handleFileChange}
-            required
           />
+          {errorMessage && <p className="error">{errorMessage}</p>}
+        </div>
+        <div className="form-note">
+          <h6>Allowed formats: .pdf, .doc, .docx, .xls, .xlsx, .png, .jpg, .jpeg</h6>
+          <h6>Max file size: 5MB</h6>
         </div>
         <button type="submit" className="btn btn-primary btn-block">Submit Transaction</button>
       </form>

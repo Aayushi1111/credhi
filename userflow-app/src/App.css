@@ -332,7 +332,7 @@ body {
 /* Container for document retrieve sections */
 .document-retrieve-container {
   display: flex;
-  flex-direction: column; /* Change to column to stack items vertically */
+  flex-direction: column; /* Stack items vertically */
   justify-content: flex-start;
   align-items: center; /* Center align items horizontally */
   margin: 0;
@@ -341,7 +341,6 @@ body {
   border-radius: 0;
   min-height: 100vh; /* Ensure full height */
   width: 100%;
-
 }
 
 /* Styling for retrieve containers */
@@ -355,6 +354,8 @@ body {
 
 /* Styling for the previous transactions section */
 .previous-transactions-retrieve {
+  display: flex; /* Use flexbox */
+  flex-direction: column; /* Arrange items vertically */
   width: 100%;
   margin-top: 20px; /* Add some space between the heading and this section */
   padding: 0;
@@ -398,4 +399,65 @@ body {
 
 .previous-transactions-retrieve .transaction-item ul li a:hover {
   text-decoration: underline;
+}
+
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.profile-card {
+  background-color: #d5dbfa;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  width: 350px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom right, #7b42f4, #6a82fb);
+  opacity: 0.8;
+  z-index: -1;
+}
+
+.profile-card h2 {
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.profile-details p {
+  margin: 10px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.profile-details strong {
+  font-weight: bold;
+  color: #555;
+}
+
+.profile-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 15px;
+  animation: rotate 2s linear ;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }

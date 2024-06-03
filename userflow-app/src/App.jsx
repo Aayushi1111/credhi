@@ -7,6 +7,7 @@ import Register from './Components/Auth/Register';
 import Dashboard from './Components/Dashboard/Dashboard';
 import TransactionInitiate from './Components/Dashboard/TransactionInitiate';
 import DocumentRetrieve from './Components/Dashboard/DocumentRetrieve';
+import Profile from './Components/Profile'; // Import the Profile component
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -21,6 +22,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/transaction" element={<TransactionInitiate />} />
           <Route path="/document" element={<DocumentRetrieve />} />
+          <Route path="/profile" element={<Profile />} /> {/* Add the Profile route */}
         </Routes>
       </div>
     </Router>
