@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import '../../App.css';
+import '../../App.css'; // Import your CSS file
 
 const TransactionInitiate = () => {
   const [transactionName, setTransactionName] = useState('');
-  const [transactionDate, setTransactionDate] = useState('');
+  const [accountHolderName, setAccountHolderName] = useState('');
+  const [employmentType, setEmploymentType] = useState('');
+  const [employerName, setEmployerName] = useState('');
+  const [accountHolderAge, setAccountHolderAge] = useState('');
+  const [profession, setProfession] = useState('');
   const [documents, setDocuments] = useState([]);
   const [previousTransactions, setPreviousTransactions] = useState([
     { name: 'Transaction 1', date: '2023-12-01', files: ['file1.pdf', 'file2.pdf'] },
@@ -29,11 +33,15 @@ const TransactionInitiate = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Add your form submission logic here
-    console.log('Transaction Submitted:', { transactionName, transactionDate, documents });
+    console.log('Transaction Submitted:', { transactionName, accountHolderName, employmentType, employerName, accountHolderAge, profession, documents });
 
     // Clear the form
     setTransactionName('');
-    setTransactionDate('');
+    setAccountHolderName('');
+    setEmploymentType('');
+    setEmployerName('');
+    setAccountHolderAge('');
+    setProfession('');
     setDocuments([]);
   };
 
@@ -42,7 +50,7 @@ const TransactionInitiate = () => {
       <h1>Initiate a New Transaction</h1>
       <form onSubmit={handleSubmit} className="transaction-form">
         <div className="form-group">
-          <label>Transaction Name:</label>
+          <label>Transaction Name: <span className="mandatory">*</span></label>
           <input
             type="text"
             value={transactionName}
@@ -51,12 +59,54 @@ const TransactionInitiate = () => {
           />
         </div>
         <div className="form-group">
-          <label>Transaction Date:</label>
+          <label>Name of Account Holder:</label>
           <input
-            type="date"
-            value={transactionDate}
-            onChange={(e) => setTransactionDate(e.target.value)}
-            required
+            type="text"
+            value={accountHolderName}
+            onChange={(e) => setAccountHolderName(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label>Employment Type:</label>
+          <select
+            value={employmentType}
+            onChange={(e) => setEmploymentType(e.target.value)}
+          >
+            <option value="">Select Employment Type</option>
+            <option value="salaried">Salaried</option>
+            <option value="student">Student</option>
+            <option value="home-maker">Home-maker</option>
+            <option value="business owner">Business Owner</option>
+            <option value="self employed professional">Self Employed Professional</option>
+            <option value="unemployed">Unemployed</option>
+          </select>
+        </div>
+        {employmentType === 'salaried' && (
+          <div className="form-group">
+            <label>Name of Employer:</label>
+            <input
+              type="text"
+              value={employerName}
+              onChange={(e) => setEmployerName(e.target.value)}
+            />
+          </div>
+        )}
+        {employmentType === 'self employed professional' && (
+          <div className="form-group">
+            <label>Profession:</label>
+            <input
+              type="text"
+              value={profession}
+              onChange={(e) => setProfession(e.target.value)}
+            />
+          </div>
+        )}
+        <div className="form-group">
+          <label>Age of Account Holder:</label>
+          <input
+            type="number"
+            value={accountHolderAge}
+            onChange={(e) => setAccountHolderAge(e.target.value)}
           />
         </div>
         <div className="form-group">
@@ -66,13 +116,13 @@ const TransactionInitiate = () => {
             id="documents"
             name="documents"
             multiple
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+            accept=".xls,.xlsx"
             onChange={handleFileChange}
           />
           {errorMessage && <p className="error">{errorMessage}</p>}
         </div>
         <div className="form-note">
-          <h6>Allowed formats: .pdf, .doc, .docx, .xls, .xlsx, .png, .jpg, .jpeg</h6>
+          <h6>Allowed formats:  .xls, .xlsx</h6>
           <h6>Max file size: 5MB</h6>
         </div>
         <button type="submit" className="btn btn-primary btn-block">Submit Transaction</button>
