@@ -1,32 +1,22 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
 
-const Navbar = ({ isAuthenticated }) => {
-  const navigate = useNavigate();
-
-  const handleDashboardClick = () => {
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    } else {
-      navigate('/login');
-    }
-  };
-
-  const handleProfileClick = () => {
-    if (isAuthenticated) {
-      navigate('/profile');
-    } else {
-      navigate('/login');
-    }
-  };
+const Navbar = () => {
+  const { user, isAuthenticated, logout } = useAuth0();
 
   return (
     <nav className="navbar">
       <h1>UserFlow App</h1>
       <ul>
-        <li><Link to="/register">Register</Link></li>
-        <li onClick={handleDashboardClick}>Dashboard</li>
-        {isAuthenticated && <li onClick={handleProfileClick}>Profile</li>}
+        {isAuthenticated && (
+          <li className="dropdown">
+            <button className="dropbtn">Welcome, {user.name}</button>
+            <div className="dropdown-content">
+              <a href="/Profile">Profile</a>
+              <button onClick={() => logout({ returnTo: window.location.origin })}>Logout</button>
+            </div>
+          </li>
+        )}
       </ul>
     </nav>
   );

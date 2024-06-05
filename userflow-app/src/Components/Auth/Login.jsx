@@ -1,48 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth0 } from '@auth0/auth0-react';
 import { useNavigate } from 'react-router-dom';
-import '../../App.css';
 
-const Login = ({ setIsAuthenticated }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const Login = () => {
+  const { loginWithPopup, logout, isAuthenticated } = useAuth0();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Perform login logic here (e.g., call API, validate credentials)
-    setIsAuthenticated(true); // Set authentication status to true
-    navigate('/dashboard'); // Redirect to dashboard after successful login
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  const handleLogin = () => {
+    loginWithPopup({
+      authorizationParams: {
+        redirect_uri: window.location.origin,
+      },
+    });
+  };
+
+  const handleLogout = () => {
+    logout({
+      returnTo: window.location.origin,
+    });
   };
 
   return (
-    <div className="form-container">
+    <div className="login-container" style={{ textAlign: 'center' }}>
       <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary btn-block">
-          Login
+      <button className="login-button" onClick={handleLogin}>
+        Login with Auth0
+      </button>
+      {isAuthenticated ? (
+        <button className="logout-button" onClick={handleLogout}>
+          Logout
         </button>
-      </form>
-      <p>
-        New user? <a href="/Register">Register here</a>
-      </p>
+      ) : (
+        <p>New User? <a href="/register">Register</a></p>
+      )}
     </div>
   );
 };

@@ -3,7 +3,8 @@ body {
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
+  background-color: #d4f2fa;
+  
 }
 
 /* Navbar styling */
@@ -42,6 +43,50 @@ body {
   text-decoration: none;
   font-size: 1em;
 }
+/* Dropdown container */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown button */
+.dropbtn {
+  background-color: #9ec3d7;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Dropdown content */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color:#07145f;
+  color:black;
+  min-width: 160px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+/* Dropdown links */
+.dropdown-content a {
+  color: #333;
+  padding: 10px 20px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Hover effect for dropdown links */
+.dropdown-content a:hover {
+  background-color:#9ec3d7
+}
+
+/* Show dropdown content when hovering over the button */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
 
 /* Container for the main content */
 .container {
@@ -54,7 +99,7 @@ body {
 
 /* Styling for the form containers */
 .form-container {
-  background-color: white;
+  background-color: #9ec3d7;
   padding: 40px 30px;
   margin: 20px 0;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
@@ -116,6 +161,46 @@ body {
   width: 100%;
 }
 
+/* Container for the login form */
+.login-container {
+  width: 1000px; /* Adjust as needed */
+  height: 1000px; /* Increase the height */
+  margin: 0 auto;
+  padding: 20px;
+  
+  background-size:100%;
+  background-position:center;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Login button */
+.login-button {
+  background-color: #07145f; 
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  margin-top: 8px;
+  cursor: pointer;
+  margin-top: 10%;
+  margin-bottom: 10%;
+  position: center;
+  width: 50%;
+  height: 5%;
+  transition: background-color 0.3s ease; /* Add a smooth transition effect */
+
+  /* Hover effect */
+  &:hover {
+    background-color: #0c2a8a; /* Change the background color on hover */
+  }
+
+}
+
+
+
+
 /* Styling for the documents list */
 .documents-list ul {
   list-style: none;
@@ -124,7 +209,7 @@ body {
 }
 
 .documents-list ul li {
-  background-color: #27079c;
+
   margin: 5px 0;
   padding: 10px;
   border: 1px solid #ddd;
@@ -139,7 +224,7 @@ body {
   min-height: 100vh;
   width: 100%;
   padding: 20px;
-  background-color: #9ec3d7;
+
 }
 
 .dashboard-content {
@@ -220,7 +305,6 @@ body {
 .transaction-container {
   display: flex;
   flex-direction: row;
-  background-color: #164d87;
   justify-content: space-between;
   align-items: flex-start;
   margin: 20px;
@@ -232,7 +316,6 @@ body {
   flex: 1;
   margin: 20px;
   padding: 20px;
-  background-color: #d5dbfa;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -340,7 +423,6 @@ body {
   align-items: center; /* Center align items horizontally */
   margin: 0;
   padding: 0;
-  background-color: #d5dbfa;
   border-radius: 0;
   min-height: 100vh; /* Ensure full height */
   width: 100%;
@@ -412,7 +494,7 @@ body {
 }
 
 .profile-card {
-  background-color: #d5dbfa;
+background-color: #1d095f;
   padding: 20px;
   border-radius: 15px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
@@ -442,12 +524,12 @@ body {
 .profile-details p {
   margin: 10px 0;
   font-size: 16px;
-  color: #333;
+  color: #ebd2ee;
 }
 
 .profile-details strong {
   font-weight: bold;
-  color: #555;
+  color: #eff1f2;
 }
 
 .profile-img {
