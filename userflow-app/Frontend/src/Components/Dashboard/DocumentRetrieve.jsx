@@ -9,7 +9,7 @@ const DocumentRetrieve = () => {
 
   return (
     <div className="document-retrieve-container">
-      <h1><center>Retrieve Documents</center></h1>
+      <h1>Retrieve Documents</h1>
       <div className="previous-transactions-retrieve">
         {previousTransactions.map((transaction, index) => (
           <div key={index} className="transaction-item">

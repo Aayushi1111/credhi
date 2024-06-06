@@ -67,7 +67,6 @@ body {
   color:black;
   min-width: 160px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 1;
 }
 
 /* Dropdown links */
@@ -89,7 +88,7 @@ body {
 }
 
 /* Container for the main content */
-.container {
+.login-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -98,7 +97,7 @@ body {
 }
 
 /* Styling for the form containers */
-.form-container {
+.login-box {
   background-color: #9ec3d7;
   padding: 40px 30px;
   margin: 20px 0;
@@ -107,16 +106,19 @@ body {
   width: 100%;
   max-width: 400px;
   text-align: center;
+  position: cen
 }
 
+
 .form-container h1 {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 
 /* Styling for form groups */
 .form-group {
   margin-bottom: 15px;
   text-align: left;
+  
 }
 
 .form-group label {
@@ -160,20 +162,6 @@ body {
 .btn-block {
   width: 100%;
 }
-
-/* Container for the login form */
-.login-container {
-  width: 1000px; /* Adjust as needed */
-  height: 1000px; /* Increase the height */
-  margin: 0 auto;
-  padding: 20px;
-  
-  background-size:100%;
-  background-position:center;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
 
 /* Login button */
 .login-button {
@@ -431,8 +419,9 @@ body {
 /* Styling for retrieve containers */
 .document-retrieve-container h1 {
   width: 100%;
-  text-align: center;
+  text-align: left;
   margin-bottom: 20px;
+  margin-top: 80px;
   font-size: 1.75em;
   color:  #1d095f; /* Ensure the heading color stands out on the background */
 }

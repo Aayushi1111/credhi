@@ -13,7 +13,7 @@ const Navbar = () => {
             <button className="dropbtn">Welcome, {user.name}</button>
             <div className="dropdown-content">
               <a href="/Profile">Profile</a>
-              <button onClick={() => logout({ returnTo: window.location.origin })}>Logout</button>
+              <button onClick={() => logout({ returnTo: window.location.origin })}><h4>Logout</h4></button>
             </div>
           </li>
         )}
