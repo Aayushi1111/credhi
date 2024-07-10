@@ -19,13 +19,18 @@ const Login = ({ setIsAuthenticated }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      const decodedToken = jwtDecode(token);
-      if (decodedToken.exp * 1000 < Date.now()) {
+      try {
+        const decodedToken = jwtDecode(token);
+        if (decodedToken.exp * 1000 < Date.now()) {
+          handleLogout();
+        } else {
+          setIsLocalAuthenticated(true);
+          setIsAuthenticated(true);
+          setUser(decodedToken);
+        }
+      } catch (error) {
+        console.error('Invalid token error', error);
         handleLogout();
-      } else {
-        setIsLocalAuthenticated(true);
-        setIsAuthenticated(true);
-        setUser(decodedToken);
       }
     } else {
       setIsAuthenticated(false);
@@ -67,7 +72,7 @@ const Login = ({ setIsAuthenticated }) => {
       const response = await axios.post('http://localhost:3001/login', { email, password });
      
       const { token } = response.data;
-      const decodedUser = jwtDecode(token);
+      const decodedUser =jwtDecode(token);
       localStorage.setItem('token', token);
       setUser(decodedUser);
       setIsLocalAuthenticated(true);
@@ -81,7 +86,6 @@ const Login = ({ setIsAuthenticated }) => {
 
   const currentUser = auth0User || localUser;
 
- 
   return (
     <div className="login-container">
       <div className="login-box">

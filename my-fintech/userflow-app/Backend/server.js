@@ -21,7 +21,6 @@ app.use(fileUpload({
   createParentPath: true // This will create the upload directory if it does not exist
 }));
 
-
 const db = mysql.createConnection({
   host: '127.0.0.1',
   user: 'root',
@@ -40,7 +39,7 @@ const jwtSecret = process.env.JWT_SECRET;
 
 const generateAccessToken = (user) => {
   return jwt.sign(
-    { id: user.id, username: user.username },
+    { id: user.id, username: user.username, email: user.email },
     jwtSecret,
     { expiresIn: '1h' }
   );
@@ -50,60 +49,13 @@ const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
-  console.log("Token from header:", token);
-
-  if (!token) {
-    console.log("No token found");
-    return res.sendStatus(401);
-  }
+  if (!token) return res.sendStatus(401);
 
   jwt.verify(token, jwtSecret, (err, user) => {
-    if (err) {
-      console.log("Token verification failed:", err);
-      return res.sendStatus(403);
-    }
-    console.log('Decoded Token:', user);
+    if (err) return res.sendStatus(403);
     req.user = user;
-    
     next();
   });
-};
-
-const decode = require('jsonwebtoken/decode');
-
-app.get('/debug-token', (req, res) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  if (!token) {
-    return res.status(401).send('No token provided');
-  }
-
-  const decodedToken = decode(token);
-  res.json(decodedToken);
-});
-
-const verifyGoogleToken = async (req, res, next) => {
-  const token = req.body.token || req.headers['authorization'];
-  if (!token) {
-    return res.status(401).send('No token provided');
-  }
-
-  try {
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-    const payload = ticket.getPayload();
-    req.user = {
-      id: payload.sub,
-      email: payload.email,
-      name: payload.name,
-    };
-    next();
-  } catch (error) {
-    console.error('Error verifying Google ID token:', error);
-    res.status(403).send('Failed to authenticate token');
-  }
 };
 
 app.post('/register', async (req, res) => {
@@ -141,7 +93,7 @@ app.post('/login', (req, res) => {
     try {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
-        const token = jwt.sign({ id: user.id, username: user.username, email: user.email }, jwtSecret, { expiresIn: '1h' });
+        const token = generateAccessToken({ id: user.id, username: user.username, email: user.email });
         return res.status(200).json({ token, user: { id: user.id, username: user.username, email: user.email } });
       } else {
         console.log('Invalid password for user:', email);
@@ -154,10 +106,28 @@ app.post('/login', (req, res) => {
   });
 });
 
-app.post('/google-login', verifyGoogleToken, (req, res) => {
-  const user = req.user;
-  const token = jwt.sign({ id: user.id, email: user.email }, jwtSecret, { expiresIn: '1h' });
-  res.status(200).json({ token, user });
+app.post('/google-login', async (req, res) => {
+  const token = req.body.token || req.headers['authorization'];
+  if (!token) {
+    return res.status(401).send('No token provided');
+  }
+
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const user = {
+      id: payload.sub,
+      email: payload.email,
+      name: payload.name,
+    };
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error('Error verifying Google ID token:', error);
+    res.status(403).send('Failed to authenticate token');
+  }
 });
 
 app.post('/submit-transaction', authenticateToken, (req, res) => {
@@ -170,19 +140,16 @@ app.post('/submit-transaction', authenticateToken, (req, res) => {
     profession,
   } = req.body;
 
-  console.log("Transaction request body:", req.body);
-  console.log("User making the request:", req.user);
-  if (!req.user || !req.user.id) {
-    return res.status(400).send('User information is missing');
-  }
-
   const userId = req.user.id;
+  if (!userId) {
+    return res.status(400).send('User ID is missing');
+  }
 
   const documents = req.files ? req.files.documents : [];
 
   const insertTransaction = `INSERT INTO transactions (transaction_name, account_holder_name, employment_type, employer_name, account_holder_age, profession, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
-  db.query(insertTransaction, [transactionName, accountHolderName, employmentType, employerName, accountHolderAge, profession, userId], (err, result) => {
+  db.query(insertTransaction, [transactionName, accountHolderName || null, employmentType || null, employerName || null, accountHolderAge || null, profession || null, userId], (err, result) => {
     if (err) {
       console.error('Error inserting transaction into database:', err);
       return res.status(500).send('Error submitting transaction');
@@ -208,7 +175,6 @@ app.post('/submit-transaction', authenticateToken, (req, res) => {
 
 app.get('/previous-transactions', authenticateToken, (req, res) => {
   const userId = req.user.id;
-  console.log(`Fetching transactions for user: ${userId}`);
 
   const sql = 'SELECT * FROM transactions WHERE user_id = ?';
   db.query(sql, [userId], (err, results) => {
@@ -216,7 +182,6 @@ app.get('/previous-transactions', authenticateToken, (req, res) => {
       console.error('Database error:', err);
       return res.status(500).json({ error: 'Database error', details: err });
     }
-    console.log(`Transactions fetched: ${results.length}`);
     res.status(200).json(results);
   });
 });

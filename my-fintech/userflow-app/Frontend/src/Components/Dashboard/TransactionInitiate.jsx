@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {jwtDecode} from 'jwt-decode'; // Add jwt-decode library
 
 const TransactionInitiate = () => {
   const [transactionName, setTransactionName] = useState('');
@@ -23,9 +24,11 @@ const TransactionInitiate = () => {
       const response = await axios.get('http://localhost:3001/previous-transactions', {
         headers: { Authorization: `Bearer ${token}` }
       });
+      console.log('Response from backend:', response.data);
       setPreviousTransactions(response.data);
     } catch (error) {
       console.error('Error fetching previous transactions:', error);
+      setErrorMessage('Failed to fetch previous transactions. Please try again.');
     }
   };
 
@@ -46,7 +49,11 @@ const TransactionInitiate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    const token = localStorage.getItem('token');
+    const decodedToken = jwtDecode(token);
+    const userId = decodedToken.user_id; // Adjust based on your token structure
+
     const formData = new FormData();
     formData.append('transactionName', transactionName);
     formData.append('accountHolderName', accountHolderName);
@@ -54,14 +61,15 @@ const TransactionInitiate = () => {
     formData.append('employerName', employerName);
     formData.append('accountHolderAge', accountHolderAge);
     formData.append('profession', profession);
+    formData.append('user_id', userId); // Add user_id to the form data
+
     documents.forEach((file) => formData.append('documents', file));
-  
+
     try {
-      const token = localStorage.getItem('token');
       const response = await axios.post('http://localhost:3001/submit-transaction', formData, {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
       });
-      console.log('Response:', response.data);
+      console.log('Response from backend:', response.data);
 
       // Reset form fields
       setTransactionName('');
@@ -167,27 +175,23 @@ const TransactionInitiate = () => {
           />
           {errorMessage && <p className="error">{errorMessage}</p>}
         </div>
-        <div className="form-note">
-          <h6>Allowed formats: .xls, .xlsx</h6>
-          <h6>Max file size: 5MB</h6>
-        </div>
-        <button type="submit" className="btn btn-primary btn-block">Submit Transaction</button>
+        <button type="submit">Submit Transaction</button>
         {successMessage && <p className="success">{successMessage}</p>}
-        {errorMessage && <p className="error">{errorMessage}</p>}
       </form>
 
-      <h2>Previous Transactions</h2>
       <div className="previous-transactions">
-        {previousTransactions.map((transaction, index) => (
-          <div key={index} className="transaction-item">
-            <h3>{transaction.transaction_name}</h3>
-            <p>Date: {transaction.created_at}</p>
-            <p>Account Holder: {transaction.account_holder_name}</p>
-            <p>Employment Type: {transaction.employment_type}</p>
-            {transaction.employer_name && <p>Employer: {transaction.employer_name}</p>}
-            {transaction.profession && <p>Profession: {transaction.profession}</p>}
-          </div>
-        ))}
+        <h2>Previous Transactions</h2>
+        {previousTransactions.length > 0 ? (
+          previousTransactions.map((transaction, index) => (
+            <div key={index} className="transaction">
+              <h3>Transaction Name: {transaction.transactionName}</h3>
+              <p>Date of Submission: {transaction.createdAt}</p>
+              <p>Document: {transaction.documentName}</p>
+            </div>
+          ))
+        ) : (
+          <p>No previous transactions found.</p>
+        )}
       </div>
     </div>
   );
