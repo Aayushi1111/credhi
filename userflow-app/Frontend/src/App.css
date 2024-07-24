@@ -57,6 +57,7 @@ body {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  
 }
 
 /* Dropdown content */
@@ -374,7 +375,7 @@ body {
 /* Previous transactions styling */
 .previous-transactions .transaction-item {
   background-color: #f4f4f4;
-  margin-bottom: 15px;
+  margin-bottom: 30px; /* Increased margin for more space between transactions */
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -403,28 +404,44 @@ body {
   text-decoration: underline;
 }
 
+
 /* Container for document retrieve sections */
-.document-retrieve-container {
-  display: flex;
-  flex-direction: column; /* Stack items vertically */
-  justify-content: flex-start;
-  align-items: center; /* Center align items horizontally */
-  margin: 0;
-  padding: 0;
-  border-radius: 0;
-  min-height: 100vh; /* Ensure full height */
+/* DocumentRetrieve table styling */
+.document-retrieve-container table {
   width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
-/* Styling for retrieve containers */
-.document-retrieve-container h1 {
-  width: 100%;
-  text-align: left;
-  margin-bottom: 20px;
-  margin-top: 80px;
-  font-size: 1.75em;
-  color:  #1d095f; /* Ensure the heading color stands out on the background */
+.document-retrieve-container th,
+.document-retrieve-container td {
+  border: 1px solid #ddd;
+  padding: 8px;
 }
+
+.document-retrieve-container th {
+  background-color: #f2f2f2;
+  text-align: left;
+}
+
+.document-retrieve-container tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.document-retrieve-container tr:hover {
+  background-color: #f1f1f1;
+}
+
+.document-retrieve-container a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.document-retrieve-container a:hover {
+  text-decoration: underline;
+}
+
+
 
 /* Styling for the previous transactions section */
 .previous-transactions-retrieve {
@@ -534,4 +551,33 @@ background-color: #1d095f;
 @keyframes rotate {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+.separator {
+  margin-top: 100%;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #07145f;
+}
+
+.separator::before {
+  margin-right: .25em;
+}
+
+.separator::after {
+  margin-left: .25em;
+}
+
+.separator-text {
+ 
+  padding: 0 10px;
+  font-size: 14px;
+  color: #555;
 }

@@ -7,10 +7,21 @@ const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [phoneno, setPhoneno] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      alert("Passwords don't match");
+      return;
+    }
+    if (phoneno.length !== 10) {
+      alert('Phone number must be 10 characters long');
+      return;
+    }
+
     try {
       await axios.post('http://localhost:3001/register', { username, email, password });
       navigate('/');
@@ -52,6 +63,24 @@ const Register = () => {
               required
             />
           </div>
+          <div className="form-group">
+            <label>Confirm Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label>Phone number</label>
+            <input
+              type="text"  
+              value={phoneno}
+              onChange={(e) => setPhoneno(e.target.value)}
+              required
+            />
+          </div>
           <button type="submit" className="btn btn-primary btn-block">
             Register
           </button>
@@ -62,4 +91,3 @@ const Register = () => {
 };
 
 export default Register;
-

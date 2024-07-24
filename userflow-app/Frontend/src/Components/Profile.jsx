@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { UserContext } from '../Contexts/UserContext';
 import '../App.css';
 
 const Profile = ({ coins }) => {
-  // Sample user data; replace with actual user data from your context or state
-  const user = {
-    name: 'Aayushi',
-    email: 'aayushi@example.com',
-    phone: '123-456-7890'
-  };
+  const { user } = useContext(UserContext);
+
+  if (!user) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="profile-container">
@@ -15,9 +15,9 @@ const Profile = ({ coins }) => {
         <img src="https://via.placeholder.com/150" alt="Profile" className="profile-img" />
         <h2>User Profile</h2>
         <div className="profile-details">
-          <p><strong>Name:</strong> {user.name}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          <p><strong>Phone:</strong> {user.phone}</p>
+          <p><strong>Name:</strong> {user.name || 'N/A'}</p>
+          <p><strong>Email:</strong> {user.email || 'N/A'}</p>
+          <p><strong>Phone:</strong> {user.phone || 'N/A'}</p>
           <p><strong>Coins:</strong> {coins}</p> {/* Display user's coins */}
         </div>
       </div>
