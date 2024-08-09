@@ -3,24 +3,12 @@ body {
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #d4f2fa;
+  background-color: white;
   
 }
 
 /* Navbar styling */
-.navbar {
-  background-color: #1c0932;
-  color: white;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: fixed;
-  width: 100%;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-}
+
 
 .navbar h1 {
   margin: 0;
@@ -35,11 +23,11 @@ body {
 }
 
 .navbar ul li {
-  margin-right: 20px;
+  margin-right: 0px;
 }
 
 .navbar ul li a {
-  color: white;
+  color: #9ec3d7;
   text-decoration: none;
   font-size: 1em;
 }
@@ -85,6 +73,61 @@ body {
 
 /* Show dropdown content when hovering over the button */
 .dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/*prenav */
+.navbar {
+  
+  color: rgb(192, 31, 31);
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.navbar-title {
+  font-size: 3.5em;
+  font-weight: bold;
+  margin: 0;
+}
+
+.navbar-menu {
+  display: flex;
+}
+
+.navbar-menu .ant-menu-item a {
+  color: #2c2c7a;
+  text-decoration: none;
+  font-size: 1.5em;
+}
+
+.navbar-menu .ant-menu-item a:hover {
+  color: orange;
+  text-decoration: underline wavy;
+}
+
+/* Scroll to top button styles */
+.scroll-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #1c0932;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: none;
+  z-index: 1000;
+}
+
+.scroll-to-top.visible {
   display: block;
 }
 
@@ -213,6 +256,7 @@ body {
   min-height: 100vh;
   width: 100%;
   padding: 20px;
+ 
 
 }
 
@@ -408,6 +452,7 @@ body {
 /* Container for document retrieve sections */
 /* DocumentRetrieve table styling */
 .document-retrieve-container table {
+  margin-top: 40%;
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;

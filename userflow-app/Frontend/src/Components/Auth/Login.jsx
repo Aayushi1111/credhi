@@ -127,11 +127,11 @@ const Login = ({ setIsAuthenticated }) => {
           Login with GOOGLE
         </button>
         {isAuth0Authenticated || isLocalAuthenticated ? (
-          <div>
+          <div className="user-info">
             <p>Welcome, {currentUser?.given_name || currentUser?.username || currentUser?.email}</p>
-            <button className="logout-button" onClick={handleLogout}>
+            <p className="logout-link" onClick={handleLogout} style={{ cursor: 'pointer', color: 'blue' }}>
               Logout
-            </button>
+            </p>
           </div>
         ) : (
           <p>New User? <a href="/register">Register</a></p>
