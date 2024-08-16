@@ -136,6 +136,30 @@ button {
   color: #1b1b4d;
   border-bottom-color: #1b1b4d;
 }
+.contact-us-section {
+  padding: 50px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.contact-us-section h2 {
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.contact-us-section p {
+  font-size: 1.1em;
+  margin-bottom: 40px;
+  color: #555;
+}
+
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+
 
 /* Keyframes for animations */
 @keyframes slide-left {

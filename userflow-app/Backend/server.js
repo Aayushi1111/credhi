@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const { OAuth2Client } = require('google-auth-library');
-const fileUpload = require('express-fileupload');
+//const fileUpload = require('express-fileupload');
 const path = require('path');
 
 const app = express();
@@ -17,9 +17,6 @@ app.use(cors({
   origin: "http://localhost:3000",
   methods: ["POST", "GET"],
   credentials: true,
-}));
-app.use(fileUpload({
-  createParentPath: true
 }));
 
 const db = mysql.createConnection({
@@ -164,7 +161,13 @@ app.post('/google-login', async (req, res) => {
   }
 });
 
-app.post('/submit-transaction', authenticateToken, (req, res) => {
+
+const multer = require('multer');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+app.post('/submit-transaction', authenticateToken, upload.array('documents'), async (req, res) => {
   const {
     transactionName,
     accountHolderName,
@@ -175,76 +178,75 @@ app.post('/submit-transaction', authenticateToken, (req, res) => {
   } = req.body;
 
   const username = req.user.username;
-  console.log('Submitting transaction for user:', username); 
 
-  if (!username) {
-    return res.status(400).send('Username is missing');
+  // Check if required fields are present
+  if (!transactionName || !username) {
+    return res.status(400).send('Transaction name and username are required');
   }
 
-  // Log the entire request body to inspect it
-  console.log('Request body:', req.body);
-  console.log('Request files:', req.files);
+  // Insert transaction into the database
+  const insertTransaction = `INSERT INTO transactions 
+    (transaction_name, account_holder_name, employment_type, employer_name, account_holder_age, profession, username) 
+    VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
-  // Check if files were received
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return res.status(400).send('No files were uploaded.');
-  }
-
-  const documents = Array.isArray(req.files.documents) ? req.files.documents : [req.files.documents];
-  console.log('Documents array:', documents);
-
-  const insertTransaction = `INSERT INTO transactions (transaction_name, account_holder_name, employment_type, employer_name, account_holder_age, profession, username) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-
-  db.query(insertTransaction, [transactionName, accountHolderName || null, employmentType || null, employerName || null, accountHolderAge || null, profession || null, username], (err, result) => {
+  db.query(insertTransaction, [
+    transactionName,
+    accountHolderName || null,
+    employmentType || null,
+    employerName || null,
+    accountHolderAge || null,
+    profession || null,
+    username
+  ], async (err, result) => {
     if (err) {
       console.error('Error inserting transaction into database:', err);
       return res.status(500).send('Error submitting transaction');
     }
 
     const transactionId = result.insertId;
-    console.log('Inserted transaction ID:', transactionId); 
 
-    if (documents.length > 0) {
-      let documentErrors = [];
-      let completedUploads = 0;
+    if (req.files.length > 0) {
+      const uploadPromises = req.files.map((file, index) => {
+        const s3Params = {
+          Bucket: 'myawsbucketforcredhi',
+          Key: `${username}/${Date.now()}_${file.originalname}`,
+          Body: file.buffer,
+          ContentType: file.mimetype,
+          ACL: 'private',
+        };
 
-      documents.forEach((document, index) => {
-        const documentPath = path.join(__dirname, 'uploads', `${transactionId}_${index}_${document.name}`);
-        console.log('Saving document to:', documentPath);
-
-        document.mv(documentPath, (err) => {
-          if (err) {
-            console.error('Error saving document:', err);
-            documentErrors.push(err);
-          } else {
-            const insertDocument = 'INSERT INTO transaction_files (transaction_id, file_name, file_path) VALUES (?, ?, ?)';
-            db.query(insertDocument, [transactionId, document.name, documentPath], (err, result) => {
-              if (err) {
-                console.error('Error inserting document into database:', err);
-                documentErrors.push(err);
-              } else {
-                console.log('Document inserted into database:', document.name);
-              }
-
-              completedUploads++;
-              if (completedUploads === documents.length) {
-                if (documentErrors.length > 0) {
-                  console.error('Document errors:', documentErrors);
-                  return res.status(500).send('Error submitting some documents');
+        return s3.upload(s3Params).promise()
+          .then((data) => {
+            const insertDocument = `INSERT INTO transaction_files (transaction_id, file_name, file_path) VALUES (?, ?, ?)`;
+            return new Promise((resolve, reject) => {
+              db.query(insertDocument, [transactionId, file.originalname, data.Location], (err, result) => {
+                if (err) {
+                  console.error('Error inserting document into database:', err);
+                  reject(err);
                 } else {
-                  res.status(201).send('Transaction submitted with all documents');
+                  resolve(result);
                 }
-              }
+              });
             });
-          }
-        });
+          })
+          .catch((err) => {
+            console.error('Error uploading file to S3:', err);
+            throw err;
+          });
       });
 
+      try {
+        await Promise.all(uploadPromises);
+        res.status(201).send('Transaction submitted successfully with all documents');
+      } catch (error) {
+        res.status(500).send('Error submitting transaction or uploading files');
+      }
     } else {
-      res.status(201).send('Transaction submitted without documents');
+      res.status(201).send('Transaction submitted successfully without documents');
     }
   });
 });
+
 app.get('/download-document/:id', (req, res) => {
   const { id } = req.params;
 

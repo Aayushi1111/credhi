@@ -5,7 +5,7 @@ import PreLoginNavbar from './Preloginnav';
 const Home = () => {
   return (
     <div>
-       <PreLoginNavbar />
+      <PreLoginNavbar />
       <div id="home" className="container1">
         <div className="text-section">
           <h1>Unlock valuable insights using the AI-driven Financial Analysis platform.</h1>
@@ -22,7 +22,11 @@ const Home = () => {
       <div id="mission" className="additional-section">
         <div className="text">
           <h2>Light, fast & responsive</h2>
-          <p>Gain clarity on financial documents without getting overwhelmed by numbers. Whether it's a downturn, a surge, or a stable phase, each financial fluctuation provides meaningful and actionable insights. Make informed decisions with confidence.</p>
+          <p>
+            Gain clarity on financial documents without getting overwhelmed by numbers. Whether
+            it's a downturn, a surge, or a stable phase, each financial fluctuation provides
+            meaningful and actionable insights. Make informed decisions with confidence.
+          </p>
         </div>
         <img src="features-img.png" alt="Features Illustration" />
       </div>
@@ -30,10 +34,19 @@ const Home = () => {
       <div id="product" className="additional-section">
         <div className="text">
           <h2>About Us</h2>
-          <p>At Credhi, we focus on helping small and medium businesses succeed. We use technology to create special ways of measuring how well these businesses are doing. Our mission is to simplify access to tailored financing solutions, utilizing advanced algorithms to assess businesses accurately and offer personalized loan assistance swiftly. Committed to transparency and innovation, we're here to empower SMEs on their journey to financial growth and stability.</p>
+          <p>
+            At Credhi, we focus on helping small and medium businesses succeed. We use technology
+            to create special ways of measuring how well these businesses are doing. Our mission
+            is to simplify access to tailored financing solutions, utilizing advanced algorithms
+            to assess businesses accurately and offer personalized loan assistance swiftly.
+            Committed to transparency and innovation, we're here to empower SMEs on their journey
+            to financial growth and stability.
+          </p>
         </div>
         <img src="support-img.png" alt="Support Illustration" />
       </div>
+
+      
 
       <div id="contact" className="contact-container">
         <h2>Contact</h2>

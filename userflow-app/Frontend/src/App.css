@@ -485,6 +485,16 @@ body {
 .document-retrieve-container a:hover {
   text-decoration: underline;
 }
+.transactions-table td {
+  padding: 10px; /* Adds space between the cells */
+  border: 1px solid #ccc; /* Optional: Adds border to table cells */
+}
+
+.transactions-table th {
+  padding: 10px;
+  background-color: #f4f4f4; /* Optional: Adds a background color to the table headers */
+  border: 1px solid #ccc;
+}
 
 
 
