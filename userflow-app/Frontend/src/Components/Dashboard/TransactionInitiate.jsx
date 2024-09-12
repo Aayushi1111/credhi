@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
-import AWS from 'aws-sdk';  // Add this line
+import AWS from 'aws-sdk';
 
 // AWS SDK Configuration
 AWS.config.update({
@@ -27,20 +27,44 @@ const TransactionInitiate = () => {
   useEffect(() => {
     fetchPreviousTransactions();
   }, []);
-
+ 
+  const fetchTransactionStatus = async (transactionId) => {
+    try {
+      const response = await axios.get(`http://localhost:3001/get-transaction-status/${transactionId}`);
+      const { status } = response.data;
+      return status; // Return the correct status fetched from the backend
+    } catch (error) {
+      console.error('Error fetching transaction status:', error);
+      return 'pending'; // Default to pending only on error
+    }
+  };
+  
   const fetchPreviousTransactions = async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get('http://localhost:3001/previous-transactions', {
         headers: { Authorization: `Bearer ${token}` }
       });
-      console.log('Response from backend:', response.data);
-      setPreviousTransactions(response.data);
+  
+      const transactions = response.data;
+  
+      // Fetch and update the status for each transaction
+      const updatedTransactions = await Promise.all(
+        transactions.map(async (transaction) => {
+          const status = await fetchTransactionStatus(transaction.id); // Fetch status for each transaction
+          return { ...transaction, status }; // Update transaction with the fetched status
+        })
+      );
+  
+      setPreviousTransactions(updatedTransactions); // Set updated transactions with correct status
     } catch (error) {
       console.error('Error fetching previous transactions:', error);
       setErrorMessage('Failed to fetch previous transactions. Please try again.');
     }
   };
+  
+ 
+  
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -59,62 +83,114 @@ const TransactionInitiate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const token = localStorage.getItem('token');
     const decodedToken = jwt_decode(token);
-    const username = decodedToken.username; // Adjust based on your token structure
-  
-    // Upload documents to S3
-    const uploadPromises = documents.map((file) => {
+    const username = decodedToken.username;
+
+    try {
+        // First, create the transaction to get the transaction_id
+        const formData = new FormData();
+        formData.append('transactionName', transactionName);
+        formData.append('accountHolderName', accountHolderName);
+        formData.append('employmentType', employmentType);
+        formData.append('employerName', employerName);
+        formData.append('accountHolderAge', accountHolderAge);
+        formData.append('profession', profession);
+        formData.append('username', username);
+
+        const transactionResponse = await axios.post('http://localhost:3001/submit-transaction', formData, {
+            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+        });
+
+        const transactionId = transactionResponse.data.transaction_id; // Get the transaction_id from the response
+
+        // Upload documents to S3 under the transaction_id folder
+        const uploadPromises = documents.map((file) => {
+            const params = {
+                Bucket: 'myawsbucketforcredhi',
+                Key: `${transactionId}/${file.name}`, // Store files under the transaction_id folder
+                Body: file,
+                ContentType: file.type,
+                ACL: 'private' // Set ACL as per your requirement
+            };
+
+            return s3.upload(params).promise();
+        });
+
+        const uploadResponses = await Promise.all(uploadPromises);
+        const s3Paths = uploadResponses.map(res => res.Location); // Assuming Location has the S3 URL
+        const bankStatementS3Location = s3Paths[0]; 
+
+        // Step 2: Initiate Transaction with Metadata (HTTP request to Lambda)
+        const lambdaResponse = await axios.post(
+            'http://localhost:3001/api/initiate-transaction',
+            {
+                bankStatementS3Location, // S3 path to bank statement
+                S3Bucket: 'myawsbucketforcredhi', // Your bucket name
+                bankName: 'hdfc', // Example bank name
+                bankStatementPassword: '' // If applicable
+            },
+            {
+                headers: { 'Content-Type': 'application/json' },
+                timeout: 10000
+            }
+        );
+
+        // Step 3: Handle Callback to Update Database
+        let status = 'pebding'; // Default status if something goes wrong
+
+        if (lambdaResponse.data.status === 'success') {
+            status = 'success';
+        } else if (lambdaResponse.data.status === 'pending') {
+            status = 'pending';
+        }
+
+        // Now, update the database with the status
+        const updateData = {
+            transactionId: transactionId,
+            status: status, // This ensures the status is not blank
+            s3Paths: s3Paths
+        };
+
+        const updateResponse = await axios.put('http://localhost:3001/update-transaction', updateData, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (updateResponse.data.success) {
+            setSuccessMessage('Transaction submitted and updated successfully');
+        } else {
+            setErrorMessage('Failed to update the transaction. Please try again.');
+        }
+
+        // Reset form fields
+        setTransactionName('');
+        setAccountHolderName('');
+        setEmploymentType('');
+        setEmployerName('');
+        setAccountHolderAge('');
+        setProfession('');
+        setDocuments([]);
+        fetchPreviousTransactions();
+    } catch (error) {
+        console.error('Error submitting transaction:', error);
+        setErrorMessage('Failed to submit the transaction. Please try again.');
+    }
+};
+
+
+  const handleDownload = async (transactionId) => {
+    try {
       const params = {
         Bucket: 'myawsbucketforcredhi',
-        Key: `${username}/${file.name}`, // Store files under the user's folder
-        Body: file,
-        ContentType: file.type,
-        ACL: 'private' // Set ACL as per your requirement
+        Key: `${transactionId}/bank-statement.pdf` // Adjust the file path as necessary
       };
-  
-      return s3.upload(params).promise();
-    });
-  
-    try {
-      // Wait for all uploads to complete
-      const uploadResponses = await Promise.all(uploadPromises);
-      console.log('S3 Uploads:', uploadResponses);
-  
-      // Prepare your formData for backend submission, if needed
-      const formData = new FormData();
-      formData.append('transactionName', transactionName);
-      formData.append('accountHolderName', accountHolderName);
-      formData.append('employmentType', employmentType);
-      formData.append('employerName', employerName);
-      formData.append('accountHolderAge', accountHolderAge);
-      formData.append('profession', profession);
-      formData.append('username', username); // Add username to the form data
-  
-      // Log uploaded file locations in your backend, if needed
-      uploadResponses.forEach((response, index) => {
-        formData.append('s3FileUrls', response.Location);
-      });
-  
-      const response = await axios.post('http://localhost:3001/submit-transaction', formData, {
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
-      });
-      console.log('Response from backend:', response.data);
-  
-      // Reset form fields
-      setTransactionName('');
-      setAccountHolderName('');
-      setEmploymentType('');
-      setEmployerName('');
-      setAccountHolderAge('');
-      setProfession('');
-      setDocuments([]);
-      setSuccessMessage('Transaction submitted successfully');
-      fetchPreviousTransactions();
+
+      const url = s3.getSignedUrl('getObject', params);
+      window.location.href = url;
     } catch (error) {
-      console.error('Error submitting transaction:', error);
-      setErrorMessage('Failed to submit the transaction. Please try again.');
+      console.error('Error downloading file:', error);
+      setErrorMessage('Failed to download the file. Please try again.');
     }
   };
 
@@ -204,26 +280,36 @@ const TransactionInitiate = () => {
           <table className="transactions-table">
             <thead>
               <tr>
-                <th>Transaction Name</th>
+                <th>Transaction ID</th>
                 <th>Account Holder Name</th>
-                <th>Employment Type</th>
-                <th>Employer Name</th>
-                <th>Account Holder Age</th>
-                <th>Profession</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {previousTransactions.map((transaction) => (
-                <tr key={transaction.transaction_id}>
-                  <td>{transaction.transaction_name}</td>
-                  <td>{transaction.account_holder_name}</td>
-                  <td>{transaction.employment_type}</td>
-                  <td>{transaction.employer_name || 'N/A'}</td>
-                  <td>{transaction.account_holder_age}</td>
-                  <td>{transaction.profession || 'N/A'}</td>
-                </tr>
-              ))}
-            </tbody>
+  {previousTransactions.map((transaction) => (
+    <tr key={transaction.id}>
+      <td>{transaction.id}</td>
+      <td>{transaction.account_holder_name}</td>
+      <td>{new Date(transaction.created_at).toLocaleDateString()}</td>
+      <td>{new Date(transaction.created_at).toLocaleTimeString()}</td>
+      <td>{transaction.status}</td>
+      <td>
+        {transaction.status === 'success' ? (
+          <button onClick={() => handleDownload(transaction.id)}>
+            Download
+          </button>
+        ) : (
+          'N/A'
+        )}
+      </td>
+    </tr>
+  ))}
+</tbody>
+
+             
           </table>
         ) : (
           <p>No previous transactions found.</p>
@@ -234,3 +320,4 @@ const TransactionInitiate = () => {
 };
 
 export default TransactionInitiate;
+ 

@@ -7,6 +7,8 @@ const cors = require('cors');
 const { OAuth2Client } = require('google-auth-library');
 //const fileUpload = require('express-fileupload');
 const path = require('path');
+const axios = require('axios');
+
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -26,7 +28,7 @@ const db = mysql.createConnection({
   database: 'user_database',
 });
 
-const client = new OAuth2Client('iKuDQ9fOF5edd6h7NUSQd9Zw9oe9omhX'); // Replace with your actual Google Client ID
+const client = new OAuth2Client('iKuDQ9fOF5edd6h7NUSQd9Zw9oe9omhX');  //clientid google
 
 db.connect((err) => {
   if (err) {
@@ -36,7 +38,7 @@ db.connect((err) => {
   console.log('MySQL Connected...');
 });
 
-const jwtSecret = 'your-default-secret-key'; // Replace with your actual secret key
+const jwtSecret = 'your-default-secret-key'; 
 console.log('JWT Secret:', jwtSecret); // Debugging line
 
 const generateAccessToken = (user) => {
@@ -60,6 +62,53 @@ const authenticateToken = (req, res, next) => {
     next();
   });
 };
+
+app.post('/api/initiate-transaction', async (req, res) => {
+  try {
+    const lambdaResponse = await axios.post(
+      'https://cbhxr5c6cnosoyw2gld5rtaza40mwtjc.lambda-url.ap-south-1.on.aws/',
+      {
+        bankStatementS3Location: req.body.bankStatementS3Location,
+        S3Bucket: req.body.S3Bucket,
+        bankName: req.body.bankName,
+        bankStatementPassword: req.body.bankStatementPassword
+      }
+    );
+    res.status(200).json(lambdaResponse.data);
+  } catch (error) {
+    if (error.response) {
+      console.error('Error Response Data:', error.response.data);
+    } else {
+      console.error('Error:', error.message);
+    }
+    res.status(500).json({ status: 'failure', message: 'Failed to process the transaction' });
+  }
+});
+
+
+
+const transactionStatuses = {};
+
+// API to update the transaction status from Lambda
+app.post('/update-transaction-status', (req, res) => {
+  const { transactionId, status } = req.body;
+  if (!transactionId || !status) {
+    return res.status(400).json({ success: false, message: 'Transaction ID and status are required' });
+  }
+
+  // Update the status in the in-memory store
+  transactionStatuses[transactionId] = status;
+  console.log(`Transaction ${transactionId} updated to ${status}`);
+
+  res.json({ success: true });
+});
+
+// API to retrieve the current status of a transaction
+app.get('/get-transaction-status/:transactionId', (req, res) => {
+  const { transactionId } = req.params;
+  const status = transactionStatuses[transactionId] || 'pending'; // Default to 'pending'
+  res.json({ status });
+});
 
 app.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
@@ -168,84 +217,69 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 app.post('/submit-transaction', authenticateToken, upload.array('documents'), async (req, res) => {
-  const {
-    transactionName,
-    accountHolderName,
-    employmentType,
-    employerName,
-    accountHolderAge,
-    profession,
-  } = req.body;
-
+  const { transactionName, accountHolderName, employmentType, employerName, accountHolderAge, profession } = req.body;
   const username = req.user.username;
 
-  // Check if required fields are present
   if (!transactionName || !username) {
-    return res.status(400).send('Transaction name and username are required');
+    return res.status(400).json({ message: 'Transaction name and username are required' });
   }
 
-  // Insert transaction into the database
-  const insertTransaction = `INSERT INTO transactions 
-    (transaction_name, account_holder_name, employment_type, employer_name, account_holder_age, profession, username) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  const insertTransactionQuery = `
+    INSERT INTO transactions (transaction_name, account_holder_name, employment_type, employer_name, account_holder_age, profession, username)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
 
-  db.query(insertTransaction, [
-    transactionName,
-    accountHolderName || null,
-    employmentType || null,
-    employerName || null,
-    accountHolderAge || null,
-    profession || null,
-    username
-  ], async (err, result) => {
+  db.query(insertTransactionQuery, [transactionName, accountHolderName || null, employmentType || null, employerName || null, accountHolderAge || null, profession || null, username], async (err, result) => {
     if (err) {
-      console.error('Error inserting transaction into database:', err);
-      return res.status(500).send('Error submitting transaction');
+      console.error('Error inserting transaction:', err);
+      return res.status(500).json({ message: 'Error submitting transaction' });
     }
 
     const transactionId = result.insertId;
 
     if (req.files.length > 0) {
-      const uploadPromises = req.files.map((file, index) => {
-        const s3Params = {
-          Bucket: 'myawsbucketforcredhi',
-          Key: `${username}/${Date.now()}_${file.originalname}`,
-          Body: file.buffer,
-          ContentType: file.mimetype,
-          ACL: 'private',
-        };
+      try {
+        const uploadPromises = req.files.map(file => {
+          const s3Params = {
+            Bucket: 'myawsbucketforcredhi',
+            Key: `${username}/${Date.now()}_${file.originalname}`,
+            Body: file.buffer,
+            ContentType: file.mimetype,
+            ACL: 'private',
+          };
 
-        return s3.upload(s3Params).promise()
-          .then((data) => {
-            const insertDocument = `INSERT INTO transaction_files (transaction_id, file_name, file_path) VALUES (?, ?, ?)`;
-            return new Promise((resolve, reject) => {
-              db.query(insertDocument, [transactionId, file.originalname, data.Location], (err, result) => {
-                if (err) {
-                  console.error('Error inserting document into database:', err);
-                  reject(err);
-                } else {
-                  resolve(result);
-                }
+          return s3.upload(s3Params).promise()
+            .then(data => {
+              const insertDocumentQuery = `
+                INSERT INTO transaction_files (transaction_id, file_name, file_path)
+                VALUES (?, ?, ?)
+              `;
+
+              return new Promise((resolve, reject) => {
+                db.query(insertDocumentQuery, [transactionId, file.originalname, data.Location], (err, result) => {
+                  if (err) {
+                    console.error('Error inserting document:', err);
+                    reject(err);
+                  } else {
+                    resolve(result);
+                  }
+                });
               });
             });
-          })
-          .catch((err) => {
-            console.error('Error uploading file to S3:', err);
-            throw err;
-          });
-      });
+        });
 
-      try {
         await Promise.all(uploadPromises);
-        res.status(201).send('Transaction submitted successfully with all documents');
+        res.status(201).json({ message: 'Transaction submitted successfully with all documents', transaction_id: transactionId });
       } catch (error) {
-        res.status(500).send('Error submitting transaction or uploading files');
+        console.error('Error processing transaction:', error);
+        res.status(500).json({ message: 'Error submitting transaction or uploading files' });
       }
     } else {
-      res.status(201).send('Transaction submitted successfully without documents');
+      res.status(201).json({ message: 'Transaction submitted successfully without documents', transaction_id: transactionId });
     }
   });
 });
+
 
 app.get('/download-document/:id', (req, res) => {
   const { id } = req.params;
