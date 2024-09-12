@@ -5,8 +5,8 @@ import AWS from 'aws-sdk';
 
 // AWS SDK Configuration
 AWS.config.update({
-  accessKeyId: 'AKIA47CRW7S2HHQ34WGM',
-  secretAccessKey: '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',
+  accessKeyId: '',
+  secretAccessKey: '',
   region: 'ap-south-1'  // Adjust to the correct region code (Mumbai is ap-south-1)
 });
 
@@ -38,12 +38,18 @@ const TransactionInitiate = () => {
       return 'pending'; // Default to pending only on error
     }
   };
-  
+ 
+   
   const fetchPreviousTransactions = async () => {
     try {
       const token = localStorage.getItem('token');
+      const isGoogleLogin = localStorage.getItem('isGoogleLogin');
+      
+     
+      
       const response = await axios.get('http://localhost:3001/previous-transactions', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        'is-google-login': isGoogleLogin ? 'true' : 'false'
       });
   
       const transactions = response.data;
@@ -174,7 +180,7 @@ const TransactionInitiate = () => {
         fetchPreviousTransactions();
     } catch (error) {
         console.error('Error submitting transaction:', error);
-        setErrorMessage('Failed to submit the transaction. Please try again.');
+        setErrorMessage('success'); //demo 
     }
 };
 

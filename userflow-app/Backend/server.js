@@ -7,8 +7,6 @@ const cors = require('cors');
 const { OAuth2Client } = require('google-auth-library');
 //const fileUpload = require('express-fileupload');
 const path = require('path');
-const axios = require('axios');
-
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -28,7 +26,7 @@ const db = mysql.createConnection({
   database: 'user_database',
 });
 
-const client = new OAuth2Client('iKuDQ9fOF5edd6h7NUSQd9Zw9oe9omhX');  //clientid google
+const client = new OAuth2Client('iKuDQ9fOF5edd6h7NUSQd9Zw9oe9omhX'); // Replace with your actual Google Client ID
 
 db.connect((err) => {
   if (err) {
@@ -38,7 +36,7 @@ db.connect((err) => {
   console.log('MySQL Connected...');
 });
 
-const jwtSecret = 'your-default-secret-key'; 
+const jwtSecret = 'your-default-secret-key'; // Replace with your actual secret key
 console.log('JWT Secret:', jwtSecret); // Debugging line
 
 const generateAccessToken = (user) => {
@@ -51,41 +49,50 @@ const generateAccessToken = (user) => {
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
+  if (!authHeader) {
+    return res.status(401).json({ message: 'Authorization header missing' });
+  }
   const token = authHeader && authHeader.split(' ')[1];
   console.log('Token from authHeader:', token); // Debugging line
 
   if (!token) return res.sendStatus(401);
+  const isGoogleLogin = req.headers['is-google-login'] === 'true'; // Custom header or flag for Google login
+  if (isGoogleLogin) {
+    return next(); // Skip JWT verification for Google login
+  }
+
 
   jwt.verify(token, jwtSecret, (err, user) => {
     if (err) return res.sendStatus(403);
     req.user = user;
     next();
   });
-};
-
+}; 
 app.post('/api/initiate-transaction', async (req, res) => {
+  const { bankStatementS3Location, S3Bucket, bankName, bankStatementPassword } = req.body;
+
   try {
+    // Forward the request to the Lambda function
     const lambdaResponse = await axios.post(
       'https://cbhxr5c6cnosoyw2gld5rtaza40mwtjc.lambda-url.ap-south-1.on.aws/',
       {
-        bankStatementS3Location: req.body.bankStatementS3Location,
-        S3Bucket: req.body.S3Bucket,
-        bankName: req.body.bankName,
-        bankStatementPassword: req.body.bankStatementPassword
+        bankStatementS3Location,
+        S3Bucket,
+        bankName,
+        bankStatementPassword
+      },
+      {
+        headers: { 'Content-Type': 'application/json' }
       }
     );
+
+    // Return the Lambda response
     res.status(200).json(lambdaResponse.data);
   } catch (error) {
-    if (error.response) {
-      console.error('Error Response Data:', error.response.data);
-    } else {
-      console.error('Error:', error.message);
-    }
+    console.error('Error calling Lambda function:', error);
     res.status(500).json({ status: 'failure', message: 'Failed to process the transaction' });
   }
 });
-
-
 
 const transactionStatuses = {};
 
@@ -180,6 +187,10 @@ app.post('/google-login', async (req, res) => {
     };
 
     console.log('Google login user:', user); // Debugging line
+    // After successful login response
+    localStorage.setItem('token', response.data.token);
+   
+
 
     // Check if the user already exists in the database
     const sql = 'SELECT * FROM register WHERE email = ?';
@@ -202,6 +213,7 @@ app.post('/google-login', async (req, res) => {
 
       // Generate JWT token
       const accessToken = generateAccessToken({ id: user.id, username: user.name, email: user.email });
+      res.setHeader('is-google-login', 'true'); 
       res.status(200).json({ token: accessToken, user: { id: user.id, username: user.name, email: user.email } });
     });
   } catch (error) {
@@ -343,4 +355,4 @@ app.get('/previous-transactions', authenticateToken, (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
-});
+}); 
