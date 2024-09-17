@@ -26,7 +26,7 @@ const db = mysql.createConnection({
   database: 'user_database',
 });
 
-const client = new OAuth2Client('iKuDQ9fOF5edd6h7NUSQd9Zw9oe9omhX'); // Replace with your actual Google Client ID
+const client = new OAuth2Client(''); // Replace with your actual Google Client ID
 
 db.connect((err) => {
   if (err) {
@@ -74,7 +74,7 @@ app.post('/api/initiate-transaction', async (req, res) => {
   try {
     // Forward the request to the Lambda function
     const lambdaResponse = await axios.post(
-      'https://cbhxr5c6cnosoyw2gld5rtaza40mwtjc.lambda-url.ap-south-1.on.aws/',
+      '',
       {
         bankStatementS3Location,
         S3Bucket,
@@ -177,7 +177,7 @@ app.post('/google-login', async (req, res) => {
   try {
     const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: 'iKuDQ9fOF5edd6h7NUSQd9Zw9oe9omhX', // Replace with your actual Google Client ID
+      audience: '', // Replace with your actual Google Client ID
     });
     const payload = ticket.getPayload();
     const user = {
